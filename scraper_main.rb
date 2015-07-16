@@ -15,9 +15,8 @@ class ScraperMain < Logging
   end
 
   def merge_records(csv, web)
-    csv.each do |key, value|
-      csv[key].merge web[key]
+    web.each do |keys, record|
+      keys.each { |key| csv[key].merge(record) if csv[key] }
     end
-    csv
   end
 end
