@@ -20,7 +20,7 @@ class CsvScraper < Logging
 private
 
   def parse_record(row, headers)
-    key = "#{row['SURNAME']}-#{row['INITIALS']}"
+    key = "#{row['CONTACT ADDRESS PHONE']}"
     record = {}
     record['type'] = row['ELECTORATE'] && !row['ELECTORATE'].blank? ? 'mp' : 'senator'
     record['first_name'] = row['INITIALS']
