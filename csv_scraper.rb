@@ -3,12 +3,14 @@ require 'csv'
 require 'open-uri'
 
 class CsvScraper < Logging
-  #CSV_URL = 'http://www.parliament.nsw.gov.au/prod/parlment/members.nsf/reports/ContactSpreadsheetAll.csv'
-  CSV_URL = 'doc/ContactSpreadsheetAll.csv'
+  CSV_HOST = 'www.parliament.nsw.gov.au'
+  CSV_PATH = '/prod/parlment/members.nsf/reports/ContactSpreadsheetAll.csv'
+  CSV_URL = "http://#{CSV_HOST}#{CSV_PATH}"
 
   def scrape
     records = {}
-    csv = CSV.read(open(CSV_URL), :headers => :true)
+    #set quote char to zero string so it doesn't trip up on BS double quotes
+    csv = CSV.read(open(CSV_URL), :headers => :true, quote_char: "\x00")
     headers = csv.headers
     csv.each do |line|
       key, record = parse_record(line, headers)
@@ -19,10 +21,14 @@ class CsvScraper < Logging
 
 private
 
+  def blank?(str)
+    str == nil || str !~ /\S/ 
+  end
+
   def parse_record(row, headers)
     key = "#{row['CONTACT ADDRESS PHONE']}"
     record = {}
-    record['type'] = row['ELECTORATE'] && !row['ELECTORATE'].blank? ? 'mp' : 'senator'
+    record['type'] = row['ELECTORATE'] && !blank?(row['ELECTORATE']) ? 'mp' : 'senator'
     record['first_name'] = row['INITIALS']
     record['surname'] = row['SURNAME']
     record['email'] = row['CONTACT ADDRESS EMAIL']
@@ -43,20 +49,4 @@ private
     address += ' ' + row['CONTACT ADDRESS LINE3'] if row['CONTACT ADDRESS LINE3']
     address.strip
   end
-
-
-  #type
-    #`last_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  #`first_name` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  #`email` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  #`parliament_phone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  #`parliament_fax` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  #`office_address` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  #`office_suburb` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  #`office_state` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  #`office_postcode` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  #`office_fax` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  #`office_phone` varchar(255) COLLATE utf8_unicode_ci DEFAULT NULL,
-  #`party_id` int(11) DEFAULT NULL,
-  #`electorate_id` int(11) DEFAULT NULL,
 end
