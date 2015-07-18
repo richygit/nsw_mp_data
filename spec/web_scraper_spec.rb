@@ -14,8 +14,8 @@ RSpec.describe WebScraper do
       records = subject.scrape
 
       expect(records.count).to eq 93+42
-      expect(records).to include(["Damien", "Tudehope", ["(02) 9877 0266"]])
-      expect(records).to include(["Stuart", "Ayres", ["(02) 8574 6500", "(02) 4722 8660"]])
+      expect(records).to include(["Damien", "Tudehope", ["0298770266"]])
+      expect(records).to include(["Stuart", "Ayres", ["0285746500", "0247228660"]])
     end
   end
 end

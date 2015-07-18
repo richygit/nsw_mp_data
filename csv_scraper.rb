@@ -1,6 +1,7 @@
 require './logging'
 require 'csv'
 require 'open-uri'
+require_relative 'phone_helper'
 
 class CsvScraper < Logging
   CSV_HOST = 'www.parliament.nsw.gov.au'
@@ -25,12 +26,8 @@ private
     str == nil || str !~ /\S/ 
   end
 
-  def clean_phone_no(phone_no)
-    phone_no.scan(/\(\d{2}\)\s*\d*\s*\d*/).first
-  end
-
   def parse_record(row, headers)
-    key = clean_phone_no(row['CONTACT ADDRESS PHONE'])
+    key = PhoneHelper.clean_phone_no(row['CONTACT ADDRESS PHONE'])
     record = {}
     record['type'] = row['ELECTORATE'] && !blank?(row['ELECTORATE']) ? 'mp' : 'senator'
     record['surname'] = row['SURNAME']
@@ -40,10 +37,10 @@ private
     record['office_postcode'] = row['CONTACT ADDRESS POSTCODE']
     record['office_state'] = row['CONTACT ADDRESS STATE']
     record['office_fax'] = row['CONTACT ADDRESS FAX']
-    record['office_phone'] = clean_phone_no(row['CONTACT ADDRESS PHONE'])
+    record['office_phone'] = PhoneHelper.clean_phone_no(row['CONTACT ADDRESS PHONE'])
     record['party'] = row['PARTY']
     record['electorate'] = row['ELECTORATE']
-    record['ministerial_office_phone'] = row['MINISTERIAL OFFICE PHONE']
+    record['ministerial_office_phone'] = PhoneHelper.clean_phone_no(row['MINISTERIAL OFFICE PHONE'])
     [key, record]
   end
 

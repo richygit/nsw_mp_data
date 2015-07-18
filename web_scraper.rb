@@ -1,6 +1,7 @@
 require 'mechanize'
 require 'fileutils'
 require './logging'
+require_relative 'phone_helper'
 
 class WebScraper < Logging
   WEB_HOST = 'www.parliament.nsw.gov.au'
@@ -24,7 +25,9 @@ class WebScraper < Logging
 private
 
   def member_phones(phone)
-    phone.scan(/Phone\s*(\(?\d\d\)?\s*\d+\s*\d+)/).flatten
+    phone.scan(/Phone\s*(#{PhoneHelper::PHONE_PATTERN})/).flatten.map do |phone|
+      PhoneHelper.clean_phone_no(phone)
+    end
   end
 
   def split_name(name)
