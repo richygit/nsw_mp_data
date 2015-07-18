@@ -25,19 +25,22 @@ private
     str == nil || str !~ /\S/ 
   end
 
+  def clean_phone_no(phone_no)
+    phone_no.scan(/\(\d{2}\)\s*\d*\s*\d*/).first
+  end
+
   def parse_record(row, headers)
-    key = "#{row['CONTACT ADDRESS PHONE']}"
+    key = clean_phone_no(row['CONTACT ADDRESS PHONE'])
     record = {}
     record['type'] = row['ELECTORATE'] && !blank?(row['ELECTORATE']) ? 'mp' : 'senator'
-    record['first_name'] = row['INITIALS']
     record['surname'] = row['SURNAME']
     record['email'] = row['CONTACT ADDRESS EMAIL']
     record['office_address'] = contact_address(row)
     record['office_suburb'] = row['CONTACT ADDRESS SUBURB']
     record['office_postcode'] = row['CONTACT ADDRESS POSTCODE']
     record['office_state'] = row['CONTACT ADDRESS STATE']
-    record['office_fax'] = row['CONTACT ADDRESS PHONE']
-    record['office_phone'] = row['CONTACT ADDRESS FAX']
+    record['office_fax'] = row['CONTACT ADDRESS FAX']
+    record['office_phone'] = clean_phone_no(row['CONTACT ADDRESS PHONE'])
     record['party'] = row['PARTY']
     record['electorate'] = row['ELECTORATE']
     [key, record]
