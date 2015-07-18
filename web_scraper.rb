@@ -2,10 +2,10 @@ require 'mechanize'
 require 'fileutils'
 require './logging'
 
-      require 'pry'
-
 class WebScraper < Logging
-  WEB_URL = 'http://www.parliament.nsw.gov.au/prod/parlment/members.nsf/V3ListCurrentMembers'
+  WEB_HOST = 'www.parliament.nsw.gov.au'
+  WEB_PATH = '/prod/parlment/members.nsf/V3ListCurrentMembers'
+  WEB_URL = "http://#{WEB_HOST}#{WEB_PATH}"
 
   def scrape
     records = []
@@ -16,11 +16,9 @@ class WebScraper < Logging
 
       surname, first_name = split_name(member_row.search('td:nth-child(1) a').text)
       phones = member_phones(member_row.search('td:nth-child(3)').text)
-      binding.pry unless phones
       records << [first_name, surname, phones]
     end
-
-    records.each {|r| p r }
+    records
   end
 
 private
@@ -33,5 +31,3 @@ private
     name.split(',').map(&:strip)
   end
 end
-
-WebScraper.new.scrape
