@@ -43,6 +43,7 @@ private
     record['office_phone'] = clean_phone_no(row['CONTACT ADDRESS PHONE'])
     record['party'] = row['PARTY']
     record['electorate'] = row['ELECTORATE']
+    record['ministerial_office_phone'] = row['MINISTERIAL OFFICE PHONE']
     [key, record]
   end
 
