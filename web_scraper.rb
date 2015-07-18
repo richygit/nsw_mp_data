@@ -24,7 +24,7 @@ class WebScraper < Logging
 private
 
   def member_phones(phone)
-    phone.match(/Phone\s*(\(?\d\d\)?\s*\d+\s*\d+)/).to_a[1..-1]
+    phone.scan(/Phone\s*(\(?\d\d\)?\s*\d+\s*\d+)/).flatten
   end
 
   def split_name(name)
