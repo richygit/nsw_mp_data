@@ -25,8 +25,6 @@ class ScraperMain < Logging
     return false
   end
 
-  require 'pry'
-
   def merge_records(csv, web)
     web.each do |web_record|
       phone_nos = web_record[2]
